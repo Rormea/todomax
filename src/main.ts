@@ -13,6 +13,7 @@ async function bootstrap() {
       {
         whitelist: true, // Strip properties that do not have any decorators
         forbidNonWhitelisted: true, // Throw an error if non-whitelisted properties are present
+        transform: true, // Automatically transform payloads to DTO instances
         disableErrorMessages: false, // Enable error messages for validation failures
       })
     );

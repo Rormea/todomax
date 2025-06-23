@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { parse } from 'path';
-import { ProjectsModule } from './projects/projects.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join, parse } from 'path';
 
 @Module({
   imports: [
@@ -19,8 +19,10 @@ import { ProjectsModule } from './projects/projects.module';
       synchronize: true,
     }),
 
-    ProjectsModule,
+     ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'public'), // Serve static files from the 'public' directory
+       // Optional, can be used to change the URL prefix
+    }),
   ],
-  
 })
 export class AppModule {}
