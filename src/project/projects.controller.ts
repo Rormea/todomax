@@ -1,7 +1,9 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, ParseUUIDPipe } from '@nestjs/common';
+import { SearchTermDto } from './../common/project/dto/search-term.dto';
+import { Controller, Get, Post, Body, Patch, Param, Delete, ParseUUIDPipe, Query} from '@nestjs/common';
 import { ProjectsService } from './projects.service';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
+import { Project } from './entities/project.entity';
 
 @Controller('projects')
 export class ProjectsController {
@@ -17,20 +19,25 @@ export class ProjectsController {
     return this.projectsService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.projectsService.findOne(+id);
+    @Get(':search')
+  findByTerm(@Query() searchTermDto: SearchTermDto): Promise<Project[]> {
+    return this.projectsService.findByTerm(searchTermDto);
   }
 
-  @Patch(':id')
+  @Get(':id')
+  findOne(@Param('id', ParseUUIDPipe) id: string) {
+    return this.projectsService.findOne(id);
+  }
+
+/*   @Patch(':id')
   update(@Param('id') id: string, @Body() updateProjectDto: UpdateProjectDto) {
     return this.projectsService.update(+id, updateProjectDto);
-  }
+  } */
 
-  @Patch(':id')
+/*   @Patch(':id')
   inactiveProject(@Param('id', ParseUUIDPipe) id: string) {
     return this.projectsService.inactiveProject(id);
-  }
+  } */
 
 /*   @Delete(':id/hard')
   remove(@Param('id', ParseUUIDPipe) id: string) {

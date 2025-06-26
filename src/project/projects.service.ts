@@ -1,9 +1,11 @@
+import { SearchTermDto } from './../common/project/dto/search-term.dto';
 import { BadRequestException, Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Project } from './entities/project.entity';
-import { In, Repository } from 'typeorm';
+import { ILike, In, Repository } from 'typeorm';
+import {validate as IsUUID} from 'uuid'
 
 @Injectable()
 export class ProjectsService {
@@ -40,15 +42,70 @@ export class ProjectsService {
     }
   };
 
-  findOne(id: number) {
-    return `This action returns a #${id} project`;
+  async findOne(id: string){
+    try {
+      if (!IsUUID(id)) {
+        throw new BadRequestException(`Invalid UUID format: ${id}`);
+      }
+      
+      const project = await this.projectRepository.findOneBy({ id });
+      if (!project) {
+        throw new BadRequestException(`Project with id ${id} not found`);
+      }
+      return project;
+      
+    } catch (error) {
+      this.handleErrorDb(error);
+    }
   }
+      
 
-  update(id: number, updateProjectDto: UpdateProjectDto) {
+  async findByTerm(SearchTermDto: SearchTermDto): Promise<Project[]> {
+        if (!SearchTermDto) throw new BadRequestException('Search term is required');
+
+      try {
+        //const  searchPattern = `%${SearchTermDto.searchTerm.toLowerCase()}%`;
+        //el dto con su validator ya lo está pasando a minLength 3 y a lowerCase
+        const  searchPattern = `%${SearchTermDto.searchTerm}%`;
+        const projects = await this.projectRepository.find({
+          where: [
+            { projectName: ILike(searchPattern) },
+            { clientName: ILike(searchPattern) },
+          ],
+          order: {
+            createdAt: 'DESC',
+          },
+        })
+        //console.log(projects)
+  
+        return projects
+      
+      } catch (error) {
+        this.handleErrorDb(error);
+      }
+  };
+
+  Date(id: number, UpdateProjectDto: UpdateProjectDto) {
     return `This action updates a #${id} project`;
   }
 
-  async inactiveProject(id: string) {
+
+
+/*   async remove(id: string) {
+    const project = await this.projectRepository.findOneBy({ id });
+    if (!project) {
+      throw new BadRequestException(`Project with id ${id} not found`);
+    }
+    try {
+      await this.projectRepository.delete(id);
+      return { message: `Project with id ${id} has been deleted` };
+      
+    } catch (error) {
+      this.handleErrorDb(error);
+    }
+  }; */
+
+   private  async inactiveProject(id: string) {
     
     const project = await this.projectRepository.findOneBy({ id });
     if (!project) {
@@ -64,20 +121,6 @@ export class ProjectsService {
       
     }
   };
-
-/*   async remove(id: string) {
-    const project = await this.projectRepository.findOneBy({ id });
-    if (!project) {
-      throw new BadRequestException(`Project with id ${id} not found`);
-    }
-    try {
-      await this.projectRepository.delete(id);
-      return { message: `Project with id ${id} has been deleted` };
-      
-    } catch (error) {
-      this.handleErrorDb(error);
-    }
-  }; */
 
 
   private handleErrorDb(error: any) {
