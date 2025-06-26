@@ -3,10 +3,12 @@ import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join, parse } from 'path';
+import { Project } from './project/entities/project.entity';
+import { ProjectsModule } from './project/projects.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({isGlobal: true}),
 
     TypeOrmModule.forRoot({
       type: 'postgres',
@@ -23,6 +25,7 @@ import { join, parse } from 'path';
       rootPath: join(__dirname, '..', 'public'), // Serve static files from the 'public' directory
        // Optional, can be used to change the URL prefix
     }),
+    ProjectsModule,
   ],
 })
 export class AppModule {}
