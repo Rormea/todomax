@@ -1,10 +1,10 @@
 import { SearchTermDto } from './../common/project/dto/search-term.dto';
-import { BadRequestException, Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Project } from './entities/project.entity';
-import { ILike, In, Repository } from 'typeorm';
+import { ILike, In, Not, Repository } from 'typeorm';
 import {validate as IsUUID} from 'uuid'
 
 @Injectable()
@@ -85,8 +85,25 @@ export class ProjectsService {
       }
   };
 
-  Date(id: number, UpdateProjectDto: UpdateProjectDto) {
-    return `This action updates a #${id} project`;
+  async update(id: string, UpdateProjectDto: UpdateProjectDto) {
+    
+    try {
+    
+      const project = await this.projectRepository.preload({
+        id: id,
+        ...UpdateProjectDto,
+      });
+      
+      if (!project) {
+        throw new NotFoundException(`Project with id ${id} not found`);
+      }
+      
+      await this.projectRepository.save(project);
+      return project;
+      
+    } catch (error) {
+      this.handleErrorDb(error);
+    }
   }
 
 
