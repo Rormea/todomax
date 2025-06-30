@@ -68,7 +68,7 @@ export class ProjectsService {
       }
   };
 
-    async findOne(id: string){
+    async findOneID(id: string){
     try {
       if (!IsUUID(id)) {
         throw new BadRequestException(`Invalid UUID format: ${id}`);
@@ -87,7 +87,7 @@ export class ProjectsService {
 
   async update(id: string, updateProjectDto: UpdateProjectDto) {
 
-    const projectsExist = await this.findOne(id);
+    const projectsExist = await this.findOneID(id);
 
     if(projectsExist.isActive === false) {
       throw new BadRequestException(`Cannot update project with id ${id} because it is inactive`);
@@ -106,15 +106,15 @@ export class ProjectsService {
     } catch (error) {
       this.handleErrorDb(error);
     }
-  }
+  };
 
 
 
 
-/*   async remove(id: string) {
+  async hardRemove(id: string) {
     const project = await this.projectRepository.findOneBy({ id });
     if (!project) {
-      throw new BadRequestException(`Project with id ${id} not found`);
+      throw new NotFoundException(`Project with id ${id} not found`);
     }
     try {
       await this.projectRepository.delete(id);
@@ -123,7 +123,7 @@ export class ProjectsService {
     } catch (error) {
       this.handleErrorDb(error);
     }
-  }; */
+  };
 
    async inactiveProject(id: string) {
     

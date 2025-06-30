@@ -26,7 +26,7 @@ export class ProjectsController {
 
   @Get(':id')
   findOne(@Param('id', ParseUUIDPipe) id: string) {
-    return this.projectsService.findOne(id);
+    return this.projectsService.findOneID(id);
   }
 
   @Patch(':id')
@@ -39,9 +39,10 @@ export class ProjectsController {
     return this.projectsService.inactiveProject(id);
   }
 
-/*   @Delete(':id/hard')
-  remove(@Param('id', ParseUUIDPipe) id: string) {
-    return this.projectsService.remove(id);
-  } */
+  @Delete('hard/:id')
+  hardRemove(@Param('id', ParseUUIDPipe) id: string) {
+    return this.projectsService.hardRemove(id);
+  };
+
 }
 
