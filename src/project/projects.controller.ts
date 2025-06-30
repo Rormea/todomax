@@ -19,7 +19,7 @@ export class ProjectsController {
     return this.projectsService.findAll();
   }
 
-    @Get(':search')
+  @Get('search')
   findByTerm(@Query() searchTermDto: SearchTermDto): Promise<Project[]> {
     return this.projectsService.findByTerm(searchTermDto);
   }
@@ -34,10 +34,10 @@ export class ProjectsController {
     return this.projectsService.update(id, updateProjectDto);
   }
 
-/*   @Patch(':id')
+  @Delete('soft/:id')
   inactiveProject(@Param('id', ParseUUIDPipe) id: string) {
     return this.projectsService.inactiveProject(id);
-  } */
+  }
 
 /*   @Delete(':id/hard')
   remove(@Param('id', ParseUUIDPipe) id: string) {

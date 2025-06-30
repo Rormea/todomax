@@ -42,23 +42,6 @@ export class ProjectsService {
     }
   };
 
-  async findOne(id: string){
-    try {
-      if (!IsUUID(id)) {
-        throw new BadRequestException(`Invalid UUID format: ${id}`);
-      }
-      
-      const project = await this.projectRepository.findOneBy({ id });
-      if (!project) {
-        throw new BadRequestException(`Project with id ${id} not found`);
-      }
-      return project;
-      
-    } catch (error) {
-      this.handleErrorDb(error);
-    }
-  }
-      
 
   async findByTerm(SearchTermDto: SearchTermDto): Promise<Project[]> {
         if (!SearchTermDto) throw new BadRequestException('Search term is required');
@@ -85,18 +68,37 @@ export class ProjectsService {
       }
   };
 
-  async update(id: string, UpdateProjectDto: UpdateProjectDto) {
+    async findOne(id: string){
+    try {
+      if (!IsUUID(id)) {
+        throw new BadRequestException(`Invalid UUID format: ${id}`);
+      }
+      
+      const project = await this.projectRepository.findOneBy({ id });
+      if (!project) {
+        throw new BadRequestException(`Project with id ${id} not found`);
+      }
+      return project;
+      
+    } catch (error) {
+      this.handleErrorDb(error);
+    }
+  };
+
+  async update(id: string, updateProjectDto: UpdateProjectDto) {
+
+    const projectsExist = await this.findOne(id);
+
+    if(projectsExist.isActive === false) {
+      throw new BadRequestException(`Cannot update project with id ${id} because it is inactive`);
+    }
     
     try {
-    
-      const project = await this.projectRepository.preload({
+
+        const project = await this.projectRepository.preload({
         id: id,
-        ...UpdateProjectDto,
+        ...updateProjectDto,
       });
-      
-      if (!project) {
-        throw new NotFoundException(`Project with id ${id} not found`);
-      }
       
       await this.projectRepository.save(project);
       return project;
@@ -105,6 +107,7 @@ export class ProjectsService {
       this.handleErrorDb(error);
     }
   }
+
 
 
 
@@ -122,11 +125,11 @@ export class ProjectsService {
     }
   }; */
 
-   private  async inactiveProject(id: string) {
+   async inactiveProject(id: string) {
     
     const project = await this.projectRepository.findOneBy({ id });
     if (!project) {
-      throw new BadRequestException(`Project with id ${id} not found`);
+      throw new NotFoundException(`Project with id ${id} not found`);
     }
 
     try {
