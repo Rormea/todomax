@@ -5,6 +5,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 import { join, parse } from 'path';
 import { Project } from './project/entities/project.entity';
 import { ProjectsModule } from './project/projects.module';
+import { TaskModule } from './task/task.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { ProjectsModule } from './project/projects.module';
        // Optional, can be used to change the URL prefix
     }),
     ProjectsModule,
+    TaskModule,
   ],
 })
 export class AppModule {}
