@@ -1,7 +1,7 @@
-import { SearchTermDto } from './../common/project/dto/search-term.dto';
 import { BadRequestException, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
+import { SearchTermDto } from 'src/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Project } from './entities/project.entity';
 import { ILike, In, Not, Repository } from 'typeorm';

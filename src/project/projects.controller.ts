@@ -1,9 +1,10 @@
-import { SearchTermDto } from './../common/project/dto/search-term.dto';
+
 import { Controller, Get, Post, Body, Patch, Param, Delete, ParseUUIDPipe, Query} from '@nestjs/common';
 import { ProjectsService } from './projects.service';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { Project } from './entities/project.entity';
+import { SearchTermDto } from 'src/common';
 
 @Controller('projects')
 export class ProjectsController {

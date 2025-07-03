@@ -1,5 +1,5 @@
 
-export enum PriorityProjectEnum {
+export enum PriorityEnum {
   NORMAL = 'normal',
   MEDIUM = 'medium',
   HIGH = 'high',

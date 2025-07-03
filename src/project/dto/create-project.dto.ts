@@ -1,6 +1,6 @@
 import { Type } from "class-transformer";
 import { IsArray, IsDate, IsEmpty, IsEnum, IsIn, IsString, MinLength } from "class-validator";
-import { PriorityProjectEnum, StatusEnum } from "src/common";
+import { PriorityEnum, StatusEnum } from "src/common";
 
 export class CreateProjectDto {
 
@@ -24,8 +24,8 @@ export class CreateProjectDto {
    //@IsEnum(StatusEnum, {message: 'Status must be a valid enum value'})
     //status: StatusEnum;
 
-    @IsEnum(PriorityProjectEnum, {message: `Priority must be a valid enum value: ${Object.values(PriorityProjectEnum).join(', ')}`})
-    priority: PriorityProjectEnum;
+    @IsEnum(PriorityEnum, {message: `Priority must be a valid enum value: ${Object.values(PriorityEnum).join(', ')}`})
+    priority: PriorityEnum;
 
 /*     @IsString({each: true, message: 'Status must be a string' })
     @IsArray()
