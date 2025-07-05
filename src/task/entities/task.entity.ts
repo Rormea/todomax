@@ -1,10 +1,14 @@
 import { PriorityEnum,StatusEnum } from "src/common";
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Project } from "src/project/entities/project.entity";
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 
 
-@Entity()
+@Entity('tasks')
 export class Task {
+
+    @PrimaryGeneratedColumn('uuid')
+    id: string;
 
     @Column({type: 'text', nullable: false, unique: true})
     taskName: string;
@@ -24,15 +28,16 @@ export class Task {
     @Column({type: 'enum', enum: PriorityEnum, nullable: false})
     priority: PriorityEnum;
 
-    //@Column({type: 'text', array: true, nullable: false, default: () => 'ARRAY[]::text[]'})
-    //teamMembers: string[];
-
-    @Column({type: 'text', nullable: false})
-    clientName: string;
 
     @Column({type: 'timestamp', default: () => 'CURRENT_TIMESTAMP'})
     createdAt: Date;
 
     @Column({type: 'boolean', default: true})
-    isActive: boolean;    
+    isActive: boolean;
+
+    //Relation with Project entity
+        @ManyToOne(() => Project, 
+        (project) => project.tasks, { eager:false,  onDelete: 'CASCADE' })
+        project: Project; 
+
 }

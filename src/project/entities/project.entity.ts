@@ -1,10 +1,10 @@
 import { PriorityEnum, StatusEnum } from "src/common";
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Task } from "src/task/entities/task.entity";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 
 
 @Entity()
-
 export class Project {
 
     @PrimaryGeneratedColumn('uuid')
@@ -39,6 +39,10 @@ export class Project {
 
     @Column({type: 'boolean', default: true})
     isActive: boolean;
-    
-    
+
+    //Relation with Task entity
+    @OneToMany(() => Task, 
+    (task) => task.project, { eager:true, cascade: true })
+    tasks : Task[]; 
+
 }
