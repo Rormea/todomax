@@ -1,10 +1,12 @@
-import { Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, Logger } from '@nestjs/common';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Task } from './entities/task.entity';
 import { Repository } from 'typeorm';
-import { ProjectsService } from '../project/projects.service';
+import { Project } from 'src/project/entities/project.entity';
+import {validate as IsUUID} from 'uuid'
+
 
 @Injectable()
 export class TaskService {
@@ -14,13 +16,54 @@ export class TaskService {
     constructor(
       @InjectRepository(Task)
       private readonly tasksRepository: Repository<Task>,
-      private readonly projectsService: ProjectsService
+      @InjectRepository(Project)
+      private readonly projectRepository: Repository<Project>
     ){}
 
 
-  create(createTaskDto: CreateTaskDto) {
-    return 'This action adds a new task';
-  }
+  async checkProjectActive(projectId: string): Promise<Project> {
+
+      if(!IsUUID(projectId)) {
+        throw new BadRequestException(`Invalid project ID format: ${projectId}`);
+      }
+
+    try {
+
+      const project = await this.projectRepository.findOne({
+        where: { id: projectId, isActive: true },
+      });
+
+      if (!project) {
+        throw new BadRequestException(`Project with ID ${projectId} does not exist or is inactive.`);
+      }
+      return project;
+
+    } catch (error) {
+      this.handleErrorDb(error);
+    }
+  };
+
+  async createTask( projectId: string,createTaskDto: CreateTaskDto) {
+    try {
+      // Check if the project is active
+      const project = await this.checkProjectActive(projectId);
+      
+      // Create a new task instance
+      const task = this.tasksRepository.create(createTaskDto);
+      
+      // Assign the project entity to the task
+      const taskPlusProjectId = {
+        ...task,
+        project: Object.values(project)[0] // Assign the project entity to the task
+      };
+      
+      // Save the task to the database
+      return this.tasksRepository.save(taskPlusProjectId);
+    } catch (error) {
+      this.handleErrorDb(error);
+      
+    }
+  };
 
   findAll() {
     return `This action returns all task`;
@@ -37,4 +80,14 @@ export class TaskService {
   remove(id: number) {
     return `This action removes a #${id} task`;
   }
+
+  private handleErrorDb(error: any) {
+  
+      if (error.code === '23505') {
+        throw new BadRequestException(error.detail);
+      }
+      this.logger.error(error);
+      //console.log(error)
+      throw new InternalServerErrorException('An error occurred while processing your request');
+    };
 }

@@ -33,7 +33,8 @@
     "pg": "^8.16.1",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
-    "typeorm": "^0.3.24"
+    "typeorm": "^0.3.24",
+     "uuid": "^11.1.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.0.0",
@@ -54,8 +55,7 @@
     "ts-loader": "^9.4.3",
     "ts-node": "^10.9.1",
     "tsconfig-paths": "^4.2.0",
-    "typescript": "^5.1.3",
-    "uuid": "^11.1.0"
+    "typescript": "^5.1.3"
   },
   "jest": {
     "moduleFileExtensions": [

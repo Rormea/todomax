@@ -9,6 +9,9 @@ import { Project } from './entities/project.entity';
   controllers: [ProjectsController],
   providers: [ProjectsService],
   imports: [TypeOrmModule.forFeature([Project])],
-  exports: [ProjectsService], // Export the service if it needs to be used in other modules
+  exports: [
+    ProjectsService, // Export the service if it needs to be used in other modules
+    TypeOrmModule.forFeature([Project]) // Export the repository for use in other modules
+  ], // Export the service if it needs to be used in other modules
 })
 export class ProjectsModule {}
