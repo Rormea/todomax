@@ -42,7 +42,7 @@
 
         //Relation with Task entity
         @OneToMany(() => Task, 
-        (task) => task.project, { eager:true, cascade: true })
+        (task) => task.projectId, { eager:true, cascade: true })
         tasks : Task[]; 
 
     }

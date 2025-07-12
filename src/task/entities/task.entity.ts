@@ -1,6 +1,6 @@
 import { PriorityEnum,StatusEnum } from "src/common";
 import { Project } from "src/project/entities/project.entity";
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 
 
 
@@ -36,8 +36,10 @@ export class Task {
     isActive: boolean;
 
     //Relation with Project entity
-        @ManyToOne(() => Project, 
+        @ManyToOne(
+        () => Project,     
         (project) => project.tasks, { eager:false,  onDelete: 'CASCADE' })
-        project: Project; 
+        @JoinColumn({ name: 'projectId' })
+        projectId: Project; 
 
 }

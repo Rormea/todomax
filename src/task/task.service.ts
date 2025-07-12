@@ -54,7 +54,7 @@ export class TaskService {
       // Assign the project entity to the task
       const taskPlusProjectId = {
         ...task,
-        project: Object.values(project)[0] // Assign the project entity to the task
+        projectId: Object.values(project)[0] // Assign the project entity to the task
       };
       
       // Save the task to the database
