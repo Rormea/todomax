@@ -10,7 +10,7 @@ export class User {
     @Column({ type: 'text', nullable: false, unique: true })
     username: string;
     
-    @Column({ type: 'text', nullable: false })
+    @Column({ type: 'text', nullable: false, select: false }) // 'select: false' ensures the password is not returned in queries
     password: string;
     
     @Column({ type: 'text', nullable: false, unique: true })
@@ -23,7 +23,7 @@ export class User {
     @Column({
     type: 'text',
     array: true,
-    default: () => `'{"user"}'::text[]` // ⭐ ¡Cambio clave aquí! ⭐
+    default: () => `'{"user"}'::text[]` 
     })
     roles: RolesEnum[]; // Assuming roles is an array of RolesEnum
     

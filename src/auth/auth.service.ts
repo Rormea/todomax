@@ -1,8 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
+import { HandleErrorDbUtil } from 'src/common';
+import * as bcrypt from 'bcrypt';
+import { LoginUserDto } from './dto/login.dto';
 
 
 @Injectable()
@@ -13,18 +16,44 @@ export class AuthService {
     private readonly userRepository: Repository<User>
   ) {}
 
-  async create(createUserDto: CreateUserDto) {
+  async creatUser(createUserDto: CreateUserDto) {
     
     try {
 
-      const user = this.userRepository.create(createUserDto);
+      const {password, ...restCreateDto} = createUserDto;
+
+      const user = this.userRepository.create({
+        ...restCreateDto,
+        password: bcrypt.hashSync(password, 10) // Hash the password before saving
+      });
       await this.userRepository.save(user);
+      delete user.password; // Remove password from the response for security
       return user;
 
+      //TODO: return JWT token
+
     } catch (error) {
-      console.log('Error creating user:', error);
+      HandleErrorDbUtil.handle(error);
     }
-  }
+  };
+
+  async loginUser(loginUserDto: LoginUserDto) {
+
+      const { email, password } = loginUserDto;
+
+      const user = await this.userRepository.findOne({
+         where: { email },
+         select: {email: true, password: true} // Select only necessary fields
+      });
+      
+
+      if (!user || !bcrypt.compareSync(password, user.password)) {
+        throw new UnauthorizedException('Invalid credentials');
+      }
+
+     
+      return user; // TODO: return JWT token
+  };  
 
   findAll() {
     return `This action returns all auth`;
