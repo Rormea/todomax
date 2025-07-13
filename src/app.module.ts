@@ -6,6 +6,7 @@ import { join, parse } from 'path';
 import { Project } from './project/entities/project.entity';
 import { ProjectsModule } from './project/projects.module';
 import { TaskModule } from './task/task.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -28,6 +29,7 @@ import { TaskModule } from './task/task.module';
     }),
     ProjectsModule,
     TaskModule,
+    AuthModule,
   ],
 })
 export class AppModule {}
