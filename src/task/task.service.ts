@@ -6,12 +6,13 @@ import { Task } from './entities/task.entity';
 import { Repository } from 'typeorm';
 import { Project } from 'src/project/entities/project.entity';
 import {validate as IsUUID} from 'uuid'
+import { HandleErrorDbUtil } from 'src/common';
 
 
 @Injectable()
 export class TaskService {
 
-  private readonly logger = new Logger('TaskService'); 
+
 
     constructor(
       @InjectRepository(Task)
@@ -39,7 +40,7 @@ export class TaskService {
       return project;
 
     } catch (error) {
-      this.handleErrorDb(error);
+      HandleErrorDbUtil.handle(error);
     }
   };
 
@@ -60,7 +61,7 @@ export class TaskService {
       // Save the task to the database
       return this.tasksRepository.save(taskPlusProjectId);
     } catch (error) {
-      this.handleErrorDb(error);
+      HandleErrorDbUtil.handle(error);
       
     }
   };
@@ -81,13 +82,5 @@ export class TaskService {
     return `This action removes a #${id} task`;
   }
 
-  private handleErrorDb(error: any) {
-  
-      if (error.code === '23505') {
-        throw new BadRequestException(error.detail);
-      }
-      this.logger.error(error);
-      //console.log(error)
-      throw new InternalServerErrorException('An error occurred while processing your request');
-    };
+
 }

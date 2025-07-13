@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable, InternalServerErrorException, Logger, NotFoundException } from '@nestjs/common';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
-import { SearchTermDto } from 'src/common';
+import { HandleErrorDbUtil, SearchTermDto } from 'src/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Project } from './entities/project.entity';
 import { ILike, In, Not, Repository } from 'typeorm';
@@ -10,7 +10,7 @@ import {validate as IsUUID} from 'uuid'
 @Injectable()
 export class ProjectsService {
 
-  private readonly logger = new Logger('ProjectsService');
+
 
   constructor(
     @InjectRepository(Project)
@@ -28,7 +28,7 @@ export class ProjectsService {
       
     } catch (error) {
       //console.log(error)
-      this.handleErrorDb(error);
+      HandleErrorDbUtil.handle(error)
     }
   };
 
@@ -38,7 +38,7 @@ export class ProjectsService {
       const allProjects = await this.projectRepository.find();
       return allProjects;
     } catch (error) {
-      this.handleErrorDb(error);
+      HandleErrorDbUtil.handle(error)
     }
   };
 
@@ -64,7 +64,7 @@ export class ProjectsService {
         return projects
       
       } catch (error) {
-        this.handleErrorDb(error);
+        HandleErrorDbUtil.handle(error)
       }
   };
 
@@ -81,7 +81,7 @@ export class ProjectsService {
       return project;
       
     } catch (error) {
-      this.handleErrorDb(error);
+      HandleErrorDbUtil.handle(error)
     }
   };
 
@@ -106,7 +106,7 @@ export class ProjectsService {
       return project;
       
     } catch (error) {
-      this.handleErrorDb(error);
+      HandleErrorDbUtil.handle(error)
     }
   };
 
@@ -123,7 +123,7 @@ export class ProjectsService {
       return { message: `Project with id ${id} has been deleted` };
       
     } catch (error) {
-      this.handleErrorDb(error);
+      HandleErrorDbUtil.handle(error)
     }
   };
 
@@ -139,20 +139,10 @@ export class ProjectsService {
       return { message: `Project with id ${id} has been deactivated` };
       
     } catch (error) {
-      this.handleErrorDb(error);
+      HandleErrorDbUtil.handle(error)
       
     }
   };
 
-
-  private handleErrorDb(error: any) {
-
-    if (error.code === '23505') {
-      throw new BadRequestException(error.detail);
-    }
-    this.logger.error(error);
-    //console.log(error)
-    throw new InternalServerErrorException('An error occurred while processing your request');
-  };
 
 }
