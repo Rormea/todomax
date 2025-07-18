@@ -13,6 +13,12 @@
 $ yarn install
 ```
 
+## Docker compose UP
+
+```bash
+$ docker-compose up -d
+```
+
 ## Compile and run the project
 
 ```bash
