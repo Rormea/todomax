@@ -7,6 +7,7 @@ import { Project } from './project/entities/project.entity';
 import { ProjectsModule } from './project/projects.module';
 import { TaskModule } from './task/task.module';
 import { AuthModule } from './auth/auth.module';
+import { EmailModule } from './email/email.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { AuthModule } from './auth/auth.module';
     ProjectsModule,
     TaskModule,
     AuthModule,
+    EmailModule,
   ],
 })
 export class AppModule {}

@@ -7,8 +7,7 @@ export class TokenUserDto {
 
 
     @IsString()
-    @MinLength(4)
-    @MaxLength(4)
+    @MinLength(6)
 
     token: string;
 

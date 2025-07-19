@@ -5,6 +5,7 @@ import { Repository } from "typeorm";
 import { TokenUser } from './entities/token.entity';
 import { randomBytes } from "crypto";
 import { HandleErrorDbUtil } from "src/common";
+import { TokenUserDto } from "./dto/token.dto";
 
 
 
@@ -39,7 +40,8 @@ export class TokenService {
          })
 
          try {
-            return await this.tokenRepository.save(newToken)
+            await this.tokenRepository.save(newToken)
+            return newToken.token
          } catch (error) {
             HandleErrorDbUtil.handle(error)
          }
