@@ -37,18 +37,21 @@ export class AuthService {
         ...restCreateDto,
         password: bcrypt.hashSync(password, 10) // Hash the password before saving
       });
+
+      await this.userRepository.save(user);
+      delete user.password;
+      // Remove password from the response for security
+
       // ⭐Aqui trer el servicio de generar token ⭐
       const token =  await this.tokenService.generateAndSaveToken(user)
       console.log(token)
-      //TODO: Enviar mail de confirmación de token 
-      await this.emailService.sendVerificationEmail(user, token)
-      await this.userRepository.save(user);
-      delete user.password;
       
-      // Remove password from the response for security
+      // ⭐Aqui trer el servicio de envío de email de verificación de token⭐
+      await this.emailService.sendVerificationEmail(user, token)
       return user;
 
       //TODO: return JWT token
+      
 
     } catch (error) {
       HandleErrorDbUtil.handle(error);

@@ -23,13 +23,9 @@ export class TokenService {
     // ⭐Generate and save a new toke⭐
     async generateAndSaveToken(user:User){
         
-        const existingToken = await this.tokenRepository.findOne({
-             where: {
-                 user: { id: user.id } 
-             }
-        });
+/*         const existingToken = await this.tokenRepository.findOneBy({token})
 
-        if(existingToken){ await this.tokenRepository.remove(existingToken)}
+        if(existingToken){ await this.tokenRepository.remove(existingToken)} */
 
         // ⭐Generate token with 4 digits ⭐
          const tokenString = randomBytes(3).toString('hex').slice(0, 6).toUpperCase(); // 2 bytes -> 6 caracteres hex
