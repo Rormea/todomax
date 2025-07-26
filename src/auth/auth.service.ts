@@ -1,3 +1,4 @@
+import { UserWhitespacable } from './../../node_modules/@babel/types/lib/index-legacy.d';
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -10,6 +11,8 @@ import { TokenUser } from './entities/token.entity';
 import { TokenService } from './token.service';
 import { EmailService } from 'src/email/email.service';
 import { TokenUserDto } from './dto/token.dto';
+import { JwtService } from '@nestjs/jwt';
+import { JwtPayload } from './interface/jwt-payload.interface';
 
 
 @Injectable()
@@ -19,7 +22,9 @@ export class AuthService {
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     private readonly tokenService: TokenService,
-    private readonly emailService: EmailService
+    private readonly emailService: EmailService,
+    private readonly jwtService: JwtService
+
   ) {}
 
   async creatUser(createUserDto: CreateUserDto) {
@@ -40,7 +45,7 @@ export class AuthService {
 
       await this.userRepository.save(user);
       delete user.password;
-      // Remove password from the response for security
+      // Remove password from the response for securityd
 
       // ⭐Aqui trer el servicio de generar token ⭐
       const token =  await this.tokenService.generateAndSaveToken(user)
@@ -48,10 +53,15 @@ export class AuthService {
       
       // ⭐Aqui trer el servicio de envío de email de verificación de token⭐
       await this.emailService.sendVerificationEmail(user, token)
-      return user;
+
 
       //TODO: return JWT token
-      
+      const jwtToken = this.getJwtToken({email: user.email})
+
+     const userAppendJwtToken = {...user,jwtToken }
+
+      return userAppendJwtToken; 
+
 
     } catch (error) {
       HandleErrorDbUtil.handle(error);
@@ -72,8 +82,12 @@ export class AuthService {
         throw new UnauthorizedException('Invalid credentials');
       }
 
-     
-      return user; // TODO: return JWT token
+     // TODO: return JWT token
+    const jwtToken = this.getJwtToken({email: user.email})
+
+     const userAppendJwtToken = {...user,jwtToken }
+
+      return userAppendJwtToken; 
   };  
 
   findAll() {
@@ -91,4 +105,13 @@ export class AuthService {
   remove(id: number) {
     return `This action removes a #${id} auth`;
   }
+
+
+    private getJwtToken ( jwtPayload: JwtPayload){
+
+        const jwtToken = this.jwtService.sign(jwtPayload);
+
+        return jwtToken;
+    }
+
 }

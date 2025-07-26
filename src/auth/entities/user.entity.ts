@@ -34,7 +34,7 @@ export class User {
     @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
     createdAt: Date;
 
-    @OneToOne(() => TokenUser, token => token.user, { eager: true})
+    @OneToOne(() => TokenUser, token => token.user, { eager: false})
     token: TokenUser; // Assuming you have a TokenUser entity defined elsewhere
  
 }
